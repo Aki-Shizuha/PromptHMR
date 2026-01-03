@@ -6,6 +6,13 @@ from .detector import FacialLandmarkDetector
 from .expression_analyzer import ExpressionAnalyzer
 from .arkit_blendshapes import ARKitBlendshapeData, ARKIT_BLENDSHAPES, BLENDSHAPE_GROUPS
 from .exporter import ExpressionExporter, LiveLinkExporter
+from .enhanced_detector import EnhancedFacialDetector
+from .extended_blendshapes import (
+    ExtendedBlendshapeData,
+    EXTENDED_BLENDSHAPES,
+    ALL_BLENDSHAPES,
+    convert_detection_to_extended_blendshapes
+)
 
 __all__ = [
     'FacialLandmarkDetector',
@@ -15,4 +22,9 @@ __all__ = [
     'BLENDSHAPE_GROUPS',
     'ExpressionExporter',
     'LiveLinkExporter',
+    'EnhancedFacialDetector',
+    'ExtendedBlendshapeData',
+    'EXTENDED_BLENDSHAPES',
+    'ALL_BLENDSHAPES',
+    'convert_detection_to_extended_blendshapes',
 ]
