@@ -13,6 +13,16 @@ from .extended_blendshapes import (
     ALL_BLENDSHAPES,
     convert_detection_to_extended_blendshapes
 )
+from .animation_generator import (
+    ProceduralAnimationGenerator,
+    EasingType,
+    LoopMode,
+    R18AnimationPresets
+)
+from .video_expression_extractor import (
+    VideoExpressionExtractor,
+    MMDExpressionAnalyzer
+)
 
 __all__ = [
     'FacialLandmarkDetector',
@@ -27,4 +37,10 @@ __all__ = [
     'EXTENDED_BLENDSHAPES',
     'ALL_BLENDSHAPES',
     'convert_detection_to_extended_blendshapes',
+    'ProceduralAnimationGenerator',
+    'EasingType',
+    'LoopMode',
+    'R18AnimationPresets',
+    'VideoExpressionExtractor',
+    'MMDExpressionAnalyzer',
 ]
