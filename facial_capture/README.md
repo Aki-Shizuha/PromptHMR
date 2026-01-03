@@ -6,6 +6,10 @@
 
 - 🎭 **表情提取**: 从 2D 图像中提取面部表情（支持真人和动漫风格）
 - 🎯 **ARKit 兼容**: 输出标准 ARKit 52 个 blendshape 参数
+- 👅 **精确舌头检测**: 3D 位置、伸出程度、方向（专为阿黑颜优化）
+- 👁️ **精确瞳孔定位**: 虹膜在眼中的相对位置、注视方向
+- 🎨 **扩展参数**: 额外 18 个 blendshapes（舌头 6 + 瞳孔 8 + 特效 4）
+- 😵 **阿黑颜识别**: 自动识别和生成阿黑颜表情
 - 🔧 **插件支持**: 提供 Blender 和 Unity 插件
 - 📦 **批量处理**: 支持单张图像或序列图像处理
 
@@ -26,7 +30,9 @@ ARKit Blendshape 映射 (52个参数)
   - Alembic (动画缓存)
 ```
 
-## ARKit Blendshape 列表
+## Blendshape 参数
+
+### 标准 ARKit (52个)
 
 支持的 52 个标准 ARKit 表情单元：
 
@@ -64,6 +70,34 @@ ARKit Blendshape 映射 (52个参数)
 - jawOpen, jawForward
 - jawLeft, jawRight
 
+### 扩展参数 (18个) ⭐ 新增
+
+#### 舌头控制 (6个)
+- tongueOutExtension - 舌头伸出程度 (0-1)
+- tongueUpDown - 舌头上下位置 (-1到1)
+- tongueLeftRight - 舌头左右位置 (-1到1)
+- tongueCurl - 舌头卷曲
+- tongueWidth - 舌头宽度
+- tongueThickness - 舌头厚度
+
+#### 瞳孔精确控制 (8个)
+- leftPupilPositionX/Y - 左瞳孔位置 (-1到1)
+- rightPupilPositionX/Y - 右瞳孔位置 (-1到1)
+- leftPupilDilation - 左瞳孔扩张
+- rightPupilDilation - 右瞳孔扩张
+- leftIrisRotation - 左虹膜旋转
+- rightIrisRotation - 右虹膜旋转
+
+#### 阿黑颜特效 (4个)
+- ahegaoIntensity - 阿黑颜整体强度
+- eyeRollIntensity - 眼睛翻白强度
+- droolEffect - 流口水效果
+- heartPupils - 心形瞳孔效果
+
+**总计: ARKit 52 + 扩展 18 = 70 个 blendshape 参数**
+
+> 📖 详细文档请查看 [ENHANCED_FEATURES.md](ENHANCED_FEATURES.md)
+
 ## 安装
 
 ```bash
@@ -74,6 +108,8 @@ pip install -r requirements.txt
 ## 使用方法
 
 ### Python API
+
+#### 基础使用
 
 ```python
 from facial_capture import FacialExpressionCapture
@@ -86,6 +122,52 @@ blendshapes = capturer.extract_from_image("input.jpg")
 
 # 导出为 ARKit 格式
 capturer.export_arkit("output.json", blendshapes)
+```
+
+#### 增强功能 - 精确舌头和瞳孔检测 ⭐
+
+```python
+from facial_capture.core import EnhancedFacialDetector, convert_detection_to_extended_blendshapes
+
+# 创建增强检测器
+detector = EnhancedFacialDetector()
+
+# 检测（包含舌头和瞳孔详情）
+detection = detector.detect_with_details(image)
+
+# 查看舌头信息
+if detection['tongue']['detected']:
+    print(f"舌头伸出: {detection['tongue']['extension']:.2f}")
+    print(f"舌头位置: {detection['tongue']['position']}")
+
+# 查看瞳孔信息
+left_pupil = detection['pupils']['left']['position_in_eye']
+print(f"左瞳孔位置: X={left_pupil['x']:.2f}, Y={left_pupil['y']:.2f}")
+
+# 转换为扩展 blendshapes (70个参数)
+blendshapes = convert_detection_to_extended_blendshapes(detection)
+
+# 获取舌头和瞳孔 blendshapes
+tongue_info = blendshapes.get_tongue_info()
+pupil_info = blendshapes.get_pupil_info('left')
+
+# 可视化（显示舌头和瞳孔标记）
+vis = detector.visualize_enhanced(image, detection)
+```
+
+#### 阿黑颜表情识别
+
+```python
+# 分析阿黑颜特征
+ahegao = detector.get_ahegao_features(detection)
+
+if ahegao['is_ahegao']:
+    print(f"检测到阿黑颜！置信度: {ahegao['confidence']:.2f}")
+    print(f"舌头伸出: {ahegao['tongue_out']:.2f}")
+    print(f"眼睛翻白: {ahegao['eyes_rolled']:.2f}")
+
+# 手动设置阿黑颜表情
+blendshapes.set_ahegao_expression(intensity=0.8)
 ```
 
 ### Blender 插件
